@@ -8,7 +8,7 @@ module.exports = app => {
     app.db('tasks')
       .where({ userId: req.user.id })
       .where('estimateAt', '<=', date)
-      .orderBy('estumateAt')
+      .orderBy('estimateAt')
       .then(tasks => res.json(tasks))
       .catch(err => res.status(400).json(err))
   }

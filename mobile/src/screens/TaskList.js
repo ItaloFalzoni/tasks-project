@@ -11,6 +11,9 @@ import { View,
 import AsyncStorage from '@react-native-community/async-storage'
 import Icon from 'react-native-vector-icons/FontAwesome'
 
+import axios from 'axios'
+import { server, showError } from '../common'
+
 import moment from 'moment'
 import 'moment/locale/pt-br'
 
@@ -20,7 +23,7 @@ import commonStyles from '../commonStyles'
 import Task from '../components/Task'
 import AddTask from './AddTask'
 
-const initialState ={
+const initialState = {
   showDoneTasks: true,
   showAddTask: false,
   visibleTasks: [],
@@ -34,9 +37,23 @@ export default class TaskList extends Component {
 
   componentDidMount = async () => {
     const stateString = await AsyncStorage.getItem('tasksState')
-    const state = JSON.parse(stateString) || initialState
+    const savedState = JSON.parse(stateString) || initialState
 
-    this.setState(state, this.filterTasks)
+    this.setState({
+      showDoneTasks: savedState.showDoneTasks
+    }, this.filterTasks)
+
+    this.loadTasks()
+  }
+
+  loadTasks = async () => {
+    try {
+      const maxDate = moment().format('YYYY-MM-DD 23:59:59')
+      const res = await axios.get(`${server}/tasks?date=${maxDate}`)
+      this.setState({ tasks: res.data }, this.filterTasks)
+    } catch(e) {
+      showError(e)
+    }
   }
 
   toggleFilter = () => {
@@ -53,7 +70,9 @@ export default class TaskList extends Component {
     }
 
     this.setState({ visibleTasks })
-    AsyncStorage.setItem('tasksState', JSON.stringify(this.state))
+    AsyncStorage.setItem('tasksState', JSON.stringify({
+      showDoneTasks: this.state.showDoneTasks
+    }))
   }
 
   toggleTask = taskId => {
