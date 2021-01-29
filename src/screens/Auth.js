@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
-import { ImageBackground,
+import {
+  ImageBackground,
   Text,
   StyleSheet,
   View,
@@ -7,14 +8,14 @@ import { ImageBackground,
   Alert
 } from 'react-native'
 
-import axios from 'axios'
+// import axios from 'axios'
 import AsyncStorage from '@react-native-community/async-storage'
 
 import backgroundImage from '../../assets/imgs/login.jpg'
 import commonStyles from '../commonStyles'
 import AuthInput from '../components/AuthInput'
 
-import { server, showError, showSucess } from '../common'
+// import { server, showError, showSucess } from '../common'
 
 const initialState = {
   name: '',
@@ -39,52 +40,58 @@ export default class Auth extends Component {
   }
 
   signup = async () => {
-    try {
-      await axios.post(`${server}/signup`, {
-        name: this.state.name,
-        email: this.state.email,
-        password: this.state.password,
-        confirmPassword: this.state.confirmPassword,
-      })
+    // try {
+    //   await axios.post(`${server}/signup`, {
+    //     name: this.state.name,
+    //     email: this.state.email,
+    //     password: this.state.password,
+    //     confirmPassword: this.state.confirmPassword,
+    //   })
 
-      showSucess('Usuário cadastrado!')
+    //   showSucess('Usuário cadastrado!')
+    //   this.setState({ ...initialState })
+    // } catch (e) {
+    //   showError(e)
+    // }
+    if (this.state.name !== '' && this.state.email !== '' && this.state.password !== '' && this.state.confirmPassword !== '') {
+      showSucess('Usuário cadastrado')
       this.setState({ ...initialState })
-    } catch(e) {
-      showError(e)
+    } else {
+      showError('Preencha todos os campos')
     }
   }
 
   signin = async () => {
-    try {
-      const res = await axios.post(`${server}/signin`, {
-        email: this.state.email,
-        password: this.state.password,
-      })
-      AsyncStorage.setItem('userData', JSON.stringify(res.data))
+    // try {
+    //   const res = await axios.post(`${server}/signin`, {
+    //     email: this.state.email,
+    //     password: this.state.password,
+    //   })
+    //   AsyncStorage.setItem('userData', JSON.stringify(res.data))
 
-      axios.defaults.headers.common['Authorization'] = `bearer ${res.data.token}`
-      this.props.navigation.navigate('Home', res.data)
-    } catch(e) {
-      showError(e)
-    }
-
-
-    // if (this.state.email == 'italo@gmail.com' && this.state.password == '123') {
-    //   this.props.navigation.navigate('Home')
-    // } else {
-    //   showError('Usuário não cadastrado.')
+    //   axios.defaults.headers.common['Authorization'] = `bearer ${res.data.token}`
+    //   this.props.navigation.navigate('Home', res.data)
+    // } catch (e) {
+    //   showError(e)
     // }
+
+
+    if (this.state.email == 'italo' && this.state.password == '123') {
+      this.props.navigation.navigate('Home')
+    } else {
+      showError('Usuário não cadastrado.')
+    }
   }
 
   render() {
 
     const validations = []
-    
+
     validations.push(this.state.email && this.state.email.includes('@'))
-    validations.push(this.state.password && this.state.password.length >= 5)
-    
-    if(this.state.stageNew) {
-      validations.push(this.state.name && this.state.name.trim().length >= 3)
+    validations.push(this.state.password && this.state.password.length >= 3)
+
+    if (this.state.stageNew) {
+      validations.push(this.state.name && this.state.name.trim().length >= 1)
       validations.push(this.state.password === this.state.confirmPassword)
     }
 

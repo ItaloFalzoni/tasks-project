@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
-import { View,
+import {
+  View,
   Text,
   ImageBackground,
   StyleSheet,
@@ -55,7 +56,7 @@ export default class TaskList extends Component {
         .format('YYYY-MM-DD 23:59:59')
       const res = await axios.get(`${server}/tasks?date=${maxDate}`)
       this.setState({ tasks: res.data }, this.filterTasks)
-    } catch(e) {
+    } catch (e) {
       showError(e)
     }
   }
@@ -66,7 +67,7 @@ export default class TaskList extends Component {
 
   filterTasks = () => {
     let visibleTasks = null
-    if(this.state.showDoneTasks) {
+    if (this.state.showDoneTasks) {
       visibleTasks = [...this.state.tasks]
     } else {
       const pending = task => task.doneAt === null
@@ -83,13 +84,13 @@ export default class TaskList extends Component {
     try {
       await axios.put(`${server}/tasks/${taskId}/toggle`)
       this.loadTasks()
-    } catch(e) {
+    } catch (e) {
       showError(e)
     }
   }
 
   addTask = async newTask => {
-    if(!newTask.desc || !newTask.desc.trim()) {
+    if (!newTask.desc || !newTask.desc.trim()) {
       Alert.alert('Dados Inválidos', 'Descrição não informada!')
       return
     }
@@ -101,8 +102,8 @@ export default class TaskList extends Component {
       })
 
       this.setState({ showAddTask: false }, this.loadTasks)
-      
-    } catch(e) {
+
+    } catch (e) {
       showError(e)
     }
   }
@@ -163,14 +164,14 @@ export default class TaskList extends Component {
         <View style={styles.taskList}>
           <FlatList data={this.state.visibleTasks}
             keyExtractor={item => `${item.id}`}
-            renderItem={({item})=> <Task {...item} onToggleTask={this.toggleTask} onDelete={this.deleteTask} />}/>
+            renderItem={({ item }) => <Task {...item} onToggleTask={this.toggleTask} onDelete={this.deleteTask} />} />
         </View>
 
         <TouchableOpacity
           style={[styles.addButton, { backgroundColor: this.getColor() }]}
-          onPress={() =>this.setState({ showAddTask: true })}
+          onPress={() => this.setState({ showAddTask: true })}
           activeOpacity={0.7}>
-          <Icon name='plus' size={20} color = {commonStyles.colors.secondary} />
+          <Icon name='plus' size={20} color={commonStyles.colors.secondary} />
         </TouchableOpacity>
 
       </View>
